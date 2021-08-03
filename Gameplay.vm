@@ -1,0 +1,50 @@
+function Gameplay.new 0
+push constant 2
+call Memory.alloc 1
+pop pointer 0
+push constant 40
+push constant 40
+push constant 190
+push constant 190
+push constant 15
+call Board.new 5
+pop this 0
+push constant 265
+push constant 40
+push constant 415
+push constant 190
+push constant 15
+call Board.new 5
+pop this 1
+push pointer 0
+return
+function Gameplay.dispose 0
+push argument 0
+pop pointer 0
+push this 0
+call Board.dispose 1
+pop temp 0
+push this 1
+call Board.dispose 1
+pop temp 0
+push constant 0
+return
+function Gameplay.start 0
+push argument 0
+pop pointer 0
+push this 0
+call Board.drawBoard 1
+pop temp 0
+push this 0
+push constant 0
+not
+call Board.changeBox 2
+pop temp 0
+push this 1
+call Board.drawBoard 1
+pop temp 0
+push this 0
+call Board.putShips 1
+pop temp 0
+push constant 0
+return

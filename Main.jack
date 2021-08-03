@@ -1,0 +1,12 @@
+class Main {
+    function void main() {
+        var Gameplay gameplay;
+        let gameplay = Gameplay.new();
+        do gameplay.start();
+        
+        do gameplay.dispose();
+
+        return;
+    }
+
+}

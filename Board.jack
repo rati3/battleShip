@@ -1,0 +1,128 @@
+class Board {
+       
+    field int x1, y1, x2, y2;
+    field int x, y; // (x, y) of currently selected box
+    field int boxLen;
+    field Ships ships;
+    constructor Board new(int x1Arg, int y1Arg, int x2Arg, int y2Arg, int boxLenArg) {
+        let boxLen = boxLenArg;
+        let x1 = x1Arg;
+        let y1 = y1Arg;
+        let x2 = x2Arg;
+        let y2 = y2Arg;
+        let x = x1;
+        let y = y1;
+
+        let ships = Ships.new();
+
+        return this;
+    }
+
+    method void dispose() {
+        do ships.dispose();
+        return;
+    }
+
+    method void drawBoard() {
+        do drawHorizontal(x1, x2, y1, y2);
+        do drawVertical(x1, y1, y2, x2);
+        return;
+    }
+
+    method void drawHorizontal(int x1, int x2, int y, int endPoint) {
+        while (~(y > endPoint)) {
+            do Screen.drawLine(x1, y, x2, y);
+            let y = y + boxLen;
+        } 
+        return;
+    }
+
+    method void drawVertical(int x, int y1, int y2, int endPoint) {
+        while (~(x > endPoint)) {
+            do Screen.drawLine(x, y1, x, y2);
+            let x = x + boxLen;
+        } 
+        return;
+    }
+
+    /** Method returns true if (x,y) is out of bound, otherwise - false */
+    method boolean outOfBounds(int xArg, int yArg) { // todo fix bounding and also fix bolding
+        var boolean invalidX, invalidY;
+        let invalidX = (xArg < x1) | (~(xArg < x2));
+        let invalidY = (yArg < y1) | (~(yArg < y2));
+
+        return invalidX | invalidY;
+    }
+
+    /** method bolds or unbolds box of (x,y) */
+    method void changeBox(boolean shouldBold) {
+        do Screen.setColor(shouldBold);
+        do Screen.drawLine(x + 1, y + 1, x + boxLen - 1, y + 1);
+        do Screen.drawLine(x + 1, y + boxLen - 1, x + boxLen - 1, y + boxLen - 1);
+        do Screen.drawLine(x + 1, y + 1, x + 1, y + boxLen - 1);
+        do Screen.drawLine(x + boxLen - 1, y + 1, x + boxLen - 1, y + boxLen - 1);
+
+        return;
+    }
+
+    /** method selects or unselects box of (x,y) */
+    method void selectBox(boolean shouldFill) {
+        do Screen.setColor(shouldFill);
+        do Screen.drawRectangle(x, y, x + boxLen, y + boxLen);
+        
+        return;
+    }
+
+    method void putShips() {
+        var char keyPressed;
+        var boolean loop;
+    
+        let loop = true; 
+        while (loop) {
+
+            // wait for key realease
+            while (~(keyPressed = 0)) {
+                 let keyPressed = Keyboard.keyPressed();
+            }
+            // wait for new key press
+            while (keyPressed = 0) {
+                let keyPressed = Keyboard.keyPressed();
+            }
+    
+            if (keyPressed = 115) { // s
+                do ships.toString();
+                let loop = false;
+            }
+            if (keyPressed = 128) { // ENTER
+                do selectBox(true);
+                do ships.add(x, y, x1, y1, boxLen);
+            }
+           if (~(keyPressed < 130) & ~(keyPressed > 133)) {
+               do arrowPressed(keyPressed);
+           }
+
+        }
+        return;
+    }
+
+
+    method void arrowPressed(int keyPressed) {
+        do changeBox(false);
+        if (keyPressed = 130 & ~(outOfBounds(x - boxLen, y))) { // left
+            let x = x - boxLen;
+        }
+        if (keyPressed = 131 & ~(outOfBounds(x, y - boxLen))) { // up          
+            let y = y - boxLen;
+        }
+        if (keyPressed = 132 & ~(outOfBounds(x + boxLen, y))) { // right
+            let x = x + boxLen;
+        }
+        if (keyPressed = 133 & ~(outOfBounds(x , y + boxLen))) {// down
+            let y = y + boxLen;
+        }
+        do changeBox(true);
+        return;
+    }
+    
+
+}

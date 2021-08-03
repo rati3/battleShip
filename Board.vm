@@ -1,0 +1,394 @@
+function Board.new 0
+push constant 8
+call Memory.alloc 1
+pop pointer 0
+push argument 4
+pop this 6
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+push argument 2
+pop this 2
+push argument 3
+pop this 3
+push this 0
+pop this 4
+push this 1
+pop this 5
+call Ships.new 0
+pop this 7
+push pointer 0
+return
+function Board.dispose 0
+push argument 0
+pop pointer 0
+push this 7
+call Ships.dispose 1
+pop temp 0
+push constant 0
+return
+function Board.drawBoard 0
+push argument 0
+pop pointer 0
+push pointer 0
+push this 0
+push this 2
+push this 1
+push this 3
+call Board.drawHorizontal 5
+pop temp 0
+push pointer 0
+push this 0
+push this 1
+push this 3
+push this 2
+call Board.drawVertical 5
+pop temp 0
+push constant 0
+return
+function Board.drawHorizontal 0
+push argument 0
+pop pointer 0
+label WHILE_EXP0
+push argument 3
+push argument 4
+gt
+not
+not
+if-goto WHILE_END0
+push argument 1
+push argument 3
+push argument 2
+push argument 3
+call Screen.drawLine 4
+pop temp 0
+push argument 3
+push this 6
+add
+pop argument 3
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Board.drawVertical 0
+push argument 0
+pop pointer 0
+label WHILE_EXP0
+push argument 1
+push argument 4
+gt
+not
+not
+if-goto WHILE_END0
+push argument 1
+push argument 2
+push argument 1
+push argument 3
+call Screen.drawLine 4
+pop temp 0
+push argument 1
+push this 6
+add
+pop argument 1
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Board.outOfBounds 2
+push argument 0
+pop pointer 0
+push argument 1
+push this 0
+lt
+push argument 1
+push this 2
+lt
+not
+or
+pop local 0
+push argument 2
+push this 1
+lt
+push argument 2
+push this 3
+lt
+not
+or
+pop local 1
+push local 0
+push local 1
+or
+return
+function Board.changeBox 0
+push argument 0
+pop pointer 0
+push argument 1
+call Screen.setColor 1
+pop temp 0
+push this 4
+push constant 1
+add
+push this 5
+push constant 1
+add
+push this 4
+push this 6
+add
+push constant 1
+sub
+push this 5
+push constant 1
+add
+call Screen.drawLine 4
+pop temp 0
+push this 4
+push constant 1
+add
+push this 5
+push this 6
+add
+push constant 1
+sub
+push this 4
+push this 6
+add
+push constant 1
+sub
+push this 5
+push this 6
+add
+push constant 1
+sub
+call Screen.drawLine 4
+pop temp 0
+push this 4
+push constant 1
+add
+push this 5
+push constant 1
+add
+push this 4
+push constant 1
+add
+push this 5
+push this 6
+add
+push constant 1
+sub
+call Screen.drawLine 4
+pop temp 0
+push this 4
+push this 6
+add
+push constant 1
+sub
+push this 5
+push constant 1
+add
+push this 4
+push this 6
+add
+push constant 1
+sub
+push this 5
+push this 6
+add
+push constant 1
+sub
+call Screen.drawLine 4
+pop temp 0
+push constant 0
+return
+function Board.selectBox 0
+push argument 0
+pop pointer 0
+push argument 1
+call Screen.setColor 1
+pop temp 0
+push this 4
+push this 5
+push this 4
+push this 6
+add
+push this 5
+push this 6
+add
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+return
+function Board.putShips 2
+push argument 0
+pop pointer 0
+push constant 0
+not
+pop local 1
+label WHILE_EXP0
+push local 1
+not
+if-goto WHILE_END0
+label WHILE_EXP1
+push local 0
+push constant 0
+eq
+not
+not
+if-goto WHILE_END1
+call Keyboard.keyPressed 0
+pop local 0
+goto WHILE_EXP1
+label WHILE_END1
+label WHILE_EXP2
+push local 0
+push constant 0
+eq
+not
+if-goto WHILE_END2
+call Keyboard.keyPressed 0
+pop local 0
+goto WHILE_EXP2
+label WHILE_END2
+push local 0
+push constant 88
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 7
+call Ships.toString 1
+pop temp 0
+push constant 0
+pop local 1
+label IF_FALSE0
+push local 0
+push constant 128
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push pointer 0
+push constant 0
+not
+call Board.selectBox 2
+pop temp 0
+push this 7
+push this 4
+push this 5
+push this 0
+push this 1
+push this 6
+call Ships.add 6
+pop temp 0
+label IF_FALSE1
+push local 0
+push constant 130
+lt
+not
+push local 0
+push constant 133
+gt
+not
+and
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push pointer 0
+push local 0
+call Board.arrowPressed 2
+pop temp 0
+label IF_FALSE2
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Board.arrowPressed 0
+push argument 0
+pop pointer 0
+push pointer 0
+push constant 0
+call Board.changeBox 2
+pop temp 0
+push argument 1
+push constant 130
+eq
+push pointer 0
+push this 4
+push this 6
+sub
+push this 5
+call Board.outOfBounds 3
+not
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 4
+push this 6
+sub
+pop this 4
+label IF_FALSE0
+push argument 1
+push constant 131
+eq
+push pointer 0
+push this 4
+push this 5
+push this 6
+sub
+call Board.outOfBounds 3
+not
+and
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push this 5
+push this 6
+sub
+pop this 5
+label IF_FALSE1
+push argument 1
+push constant 132
+eq
+push pointer 0
+push this 4
+push this 6
+add
+push this 5
+call Board.outOfBounds 3
+not
+and
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push this 4
+push this 6
+add
+pop this 4
+label IF_FALSE2
+push argument 1
+push constant 133
+eq
+push pointer 0
+push this 4
+push this 5
+push this 6
+add
+call Board.outOfBounds 3
+not
+and
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push this 5
+push this 6
+add
+pop this 5
+label IF_FALSE3
+push pointer 0
+push constant 0
+not
+call Board.changeBox 2
+pop temp 0
+push constant 0
+return

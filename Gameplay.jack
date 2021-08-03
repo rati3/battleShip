@@ -1,0 +1,29 @@
+class Gameplay{
+    field Board playerBoard, computerBoard;
+    constructor Gameplay new() {
+        let playerBoard = Board.new(40, 40, 190, 190, 15);
+        let computerBoard = Board.new(265, 40, 415, 190, 15);
+
+        return this;
+    }
+
+    method void dispose() {
+        do playerBoard.dispose();
+        do computerBoard.dispose();
+
+        return;
+    }
+
+    method void start() {
+        do playerBoard.drawBoard();
+        do playerBoard.changeBox(true); // bold starting (0,0) box 
+
+        do computerBoard.drawBoard();
+
+        do playerBoard.putShips();
+
+        return;
+    }
+
+}
+
