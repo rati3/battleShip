@@ -1,7 +1,7 @@
-class Ships {
-    field Array ships; 
+class Grid {
+    field Array grid; 
 
-    constructor Ships new() {
+    constructor Grid new() {
         do initialize2DArray();
         return this;
     }
@@ -12,23 +12,23 @@ class Ships {
         var int index;
         let index = 0;
         while (index < 10) {
-            let array = ships[index];
+            let array = grid[index];
             do array.dispose();
             let index = index + 1;
         }
 
-        do ships.dispose();
+        do grid.dispose();
         return;
     }
 
     method void initialize2DArray() {
         var Array array;
         var int index;
-        let ships = Array.new(10);
+        let grid = Array.new(10);
         let index = 0;
         while (index < 10) {
             let array = Array.new(10);
-            let ships[index] = array;
+            let grid[index] = array;
             let index = index + 1;
             
         }
@@ -41,15 +41,15 @@ class Ships {
         let i = (x - startX) / boxLen;
         let j = (y - startY) / boxLen;
         
-        let array = ships[i];
+        let array = grid[i];
         let array[j] = 1;
         
         return;
     }
 
-    method boolean shipsAreValid() {
+    // method boolean gridIsValid() {
         
-    }
+    // }
 
 
 
@@ -61,7 +61,7 @@ class Ships {
         var int i, j;
         let i = 0;
         while (i < 10) {
-            let array = ships[i];
+            let array = grid[i];
             let j = 0;
             while (j < 10) {
                 do Output.printInt(array[j]);

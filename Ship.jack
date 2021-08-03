@@ -1,0 +1,15 @@
+class Ship {
+    field int x, y, size;
+    field boolean isVertical;
+
+    constructor Ship new(int xArg, int yArg, int sizeArg, boolean isVert) {
+        let x = xArg;
+        let y = yArg;
+        let size = sizeArg;
+        let isVertical = isVert;
+
+        return this;
+    }
+
+
+}

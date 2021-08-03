@@ -16,7 +16,7 @@ push this 0
 pop this 4
 push this 1
 pop this 5
-call Ships.new 0
+call Grid.new 0
 pop this 7
 push pointer 0
 return
@@ -24,7 +24,7 @@ function Board.dispose 0
 push argument 0
 pop pointer 0
 push this 7
-call Ships.dispose 1
+call Grid.dispose 1
 pop temp 0
 push constant 0
 return
@@ -250,13 +250,13 @@ pop local 0
 goto WHILE_EXP2
 label WHILE_END2
 push local 0
-push constant 88
+push constant 83
 eq
 if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0
 push this 7
-call Ships.toString 1
+call Grid.toString 1
 pop temp 0
 push constant 0
 pop local 1
@@ -278,7 +278,7 @@ push this 5
 push this 0
 push this 1
 push this 6
-call Ships.add 6
+call Grid.add 6
 pop temp 0
 label IF_FALSE1
 push local 0

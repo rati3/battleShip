@@ -3,7 +3,7 @@ class Board {
     field int x1, y1, x2, y2;
     field int x, y; // (x, y) of currently selected box
     field int boxLen;
-    field Ships ships;
+    field Grid grid;
     constructor Board new(int x1Arg, int y1Arg, int x2Arg, int y2Arg, int boxLenArg) {
         let boxLen = boxLenArg;
         let x1 = x1Arg;
@@ -13,13 +13,13 @@ class Board {
         let x = x1;
         let y = y1;
 
-        let ships = Ships.new();
+        let grid = Grid.new();
 
         return this;
     }
 
     method void dispose() {
-        do ships.dispose();
+        do grid.dispose();
         return;
     }
 
@@ -89,13 +89,13 @@ class Board {
                 let keyPressed = Keyboard.keyPressed();
             }
     
-            if (keyPressed = 115) { // s
-                do ships.toString();
+            if (keyPressed = 83) { // s
+                do grid.toString();
                 let loop = false;
             }
             if (keyPressed = 128) { // ENTER
                 do selectBox(true);
-                do ships.add(x, y, x1, y1, boxLen);
+                do grid.add(x, y, x1, y1, boxLen);
             }
            if (~(keyPressed < 130) & ~(keyPressed > 133)) {
                do arrowPressed(keyPressed);

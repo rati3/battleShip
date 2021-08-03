@@ -1,13 +1,13 @@
-function Ships.new 0
+function Grid.new 0
 push constant 1
 call Memory.alloc 1
 pop pointer 0
 push pointer 0
-call Ships.initialize2DArray 1
+call Grid.initialize2DArray 1
 pop temp 0
 push pointer 0
 return
-function Ships.dispose 2
+function Grid.dispose 2
 push argument 0
 pop pointer 0
 push constant 0
@@ -38,7 +38,7 @@ call Array.dispose 1
 pop temp 0
 push constant 0
 return
-function Ships.initialize2DArray 2
+function Grid.initialize2DArray 2
 push argument 0
 pop pointer 0
 push constant 10
@@ -71,7 +71,7 @@ goto WHILE_EXP0
 label WHILE_END0
 push constant 0
 return
-function Ships.add 3
+function Grid.add 3
 push argument 0
 pop pointer 0
 push argument 1
@@ -102,7 +102,7 @@ push temp 0
 pop that 0
 push constant 0
 return
-function Ships.toString 3
+function Grid.toString 3
 push argument 0
 pop pointer 0
 push constant 0
