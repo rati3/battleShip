@@ -1,8 +1,18 @@
 class Grid {
-    field Array grid; 
+    field Array grid;          // 2D grid - at 1 there is part of ship, 0 is empty
+    field Array ships;        // array of Ship 
+    field Array sizes;       // array of all unique length
+    field Array validShips; // at the begining elements of validShips is length of each ship, -1 after add the ship
+    field int shipsFound;
 
-    constructor Grid new() {
+    constructor Grid new() { 
         do initialize2DArray();
+        do initializeSizes();
+        do initializevalidShips();
+       
+        let shipsFound = 0;
+        let ships = Array.new(7);
+
         return this;
     }
 
@@ -18,26 +28,262 @@ class Grid {
         }
 
         do grid.dispose();
+        do ships.dispose();
+        do sizes.dispose();
+        do validShips.dispose();
+
+        return;
+    }
+
+
+
+    method void initializevalidShips() {
+        let validShips = Array.new(7);
+
+        let validShips[0] = 1;
+        let validShips[1] = 1;
+        let validShips[2] = 2;
+        let validShips[3] = 2;
+        let validShips[4] = 3;
+        let validShips[5] = 4;
+        let validShips[6] = 5;
+
+        return;
+    }
+
+    method void initializeSizes() {
+        let sizes = Array.new(5);
+
+        let sizes[0] = 1;
+        let sizes[1] = 2;
+        let sizes[2] = 3;
+        let sizes[3] = 4;
+        let sizes[4] = 5;
+
         return;
     }
 
     method void initialize2DArray() {
         var Array array;
-        var int index;
+        var int i, j;
         let grid = Array.new(10);
-        let index = 0;
-        while (index < 10) {
+        let i = 0;
+        while (i < 10) {
             let array = Array.new(10);
-            let grid[index] = array;
-            let index = index + 1;
-            
+            let j = 0;
+            while (j < 10) {
+                let array[j] = 0;
+                let j = j + 1;
+            }
+            let grid[i] = array;
+            let i = i + 1;
         }
         return;
+    }
+
+    method boolean inBounds(int i, int j) {
+        var boolean validI, validJ;
+        let validI = (~(i < 0)) & (i < 10);
+        let validJ = (~(j < 0)) & (j < 10);
+
+        return validI & validJ;
+    }
+
+    /** method checks if there is part of ship at (i,j) or is empty space */
+    method boolean isEmpty(int i, int j) {
+        var Array array;
+        let array = grid[i];
+        
+        return array[j] = 0;
+    }
+
+    method boolean validNeighbor(int i, int j) {
+        if (~(inBounds(i, j))) {
+            return true;
+        }
+        
+        return isEmpty(i, j);
+    }
+
+    method void checkVertical(int i, int j, int size) {
+        var Ship ship;
+        var Array array;
+        var int loop, curr;
+        let loop = 0;
+        let array = grid[i];            // check there is 
+        while (loop < size) {          // length of 'size'
+           let curr = j + loop;       // ones vertically
+           if (inBounds(i, curr)) {
+                if (array[curr] = 0) {
+                    return;
+                }
+           }
+           let loop = loop + 1;
+        }
+
+        // check if there is any upper neighbor
+        if ((~(validNeighbor(i, j - 1))) | (~(validNeighbor(i - 1, j - 1))) | (~(validNeighbor(i + 1, j - 1)))) {
+            return;
+        }
+
+        
+        let loop = 0;
+        while (loop < size) {                                                                       // check left and
+            if ((~(validNeighbor(i - 1, j + loop))) | (~(validNeighbor(i + 1, j + loop)))) {       // right neighbors
+                return;
+            }
+            let loop = loop + 1;
+        }
+
+        // check if there is any lower neighbor
+        if ((~(validNeighbor(i, j + size))) | (~(validNeighbor(i - 1, j + size))) | (~(validNeighbor(i + 1, j + size)))) {
+            return;
+        }
+
+        let loop = 0;
+        while (loop < 7) {
+            let curr = validShips[loop];
+            if (curr = size) {                                      // if found free place for a ship
+                let ship = Ship.new(i, j, size, true);             // save and stop 
+                let ships[shipsFound] = ship;                     // searching
+                let shipsFound = shipsFound + 1;
+                let validShips[loop] = -1;
+                return;
+            }
+            let loop = loop + 1;
+        }
+
+        return;
+    }
+
+
+    method void checkHorizonatl(int i, int j, int size) {
+        var Ship ship;
+        var Array array;
+        var int loop, curr;
+        let loop = 0;
+        
+        while (loop < size) {               
+            let curr = i + loop;
+            if (inBounds(curr, j)) {
+                let array = grid[curr];       // check there is 
+                if (array[j] = 0) {          // length of 'size' 
+                    return;                 // ones horizontally
+                }
+            }
+            let loop = loop + 1;
+        }
+
+        // check if there is any left neighbor
+        if ((~(validNeighbor(i - 1, j))) | (~(validNeighbor(i - 1, j - 1))) | (~(validNeighbor(i - 1, j + 1)))) {
+            return;
+        }
+
+        let loop = 0;
+        while (loop < size) {  // check upper and lower neighbors
+            if ((~(validNeighbor(i + loop, j - 1))) | (~(validNeighbor(i + loop, j + 1)))) {    
+                return;
+            }
+            let loop = loop + 1;
+        }
+
+        // check if there is any right neighbor
+        if ((~(validNeighbor(i + size, j))) | (~(validNeighbor(i + size, j - 1))) | (~(validNeighbor(i + size, j + 1)))) {
+            return;
+        }
+
+        let loop = 0;
+        while (loop < 7) {
+            let curr = validShips[loop];
+            if (curr = size) {
+                let ship = Ship.new(i, j, size, false);
+                let ships[shipsFound] = ship;
+                let shipsFound = shipsFound + 1;
+                let validShips[loop] = -1;
+                return;
+            }
+            let loop = loop + 1;
+        }
+
+        return;
+    }
+
+
+    method void checkShip(int i, int j) {
+        var int loop, size;
+        let loop = 0;
+        while (loop < 5) {
+            let size = sizes[loop];
+            do checkVertical(i, j, size);
+            if (~(size = 1)) {               
+                do checkHorizonatl(i, j, size);
+            }
+            let loop = loop + 1;
+        }
+
+        return;
+    }
+
+    method void findShips() { // for validate sum 1 s
+        var Ship curr;
+        var Array array;
+        var int i, j;
+        
+        let i = 0;
+        while (i < 10) {
+            let array = grid[i];
+            let j = 0;
+            while (j < 10) {
+                if (array[j] = 1) {
+                    do checkShip(i, j);
+                }
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+        
+
+        // let i = 0;
+        // while (i < shipsFound) {
+        //     let curr = ships[i];
+        //     do curr.toString();
+        //     let i = i + 1;
+        // }
+
+        return;
+    }
+
+    method boolean isMorePut() {
+        var int i, j, count;
+        var Array array;
+        let count = 0;
+        let i = 0;
+        while (i < 10) {
+            let array = grid[i];
+            let j = 0;
+            while (j < 10) {
+                let count = count + array[j];
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+
+        return (count = 18); 
+    }
+
+    method boolean shipsAreValid() {
+        var boolean allShipIsPut, noMoreIsPut;
+
+        let allShipIsPut = (shipsFound = 7);
+        let noMoreIsPut = isMorePut();
+       
+        return allShipIsPut & noMoreIsPut;
     }
 
     method void add(int x, int y, int startX, int startY, int boxLen) {
         var Array array;
         var int i, j;
+        
         let i = (x - startX) / boxLen;
         let j = (y - startY) / boxLen;
         
@@ -47,12 +293,7 @@ class Grid {
         return;
     }
 
-    // method boolean gridIsValid() {
-        
-    // }
-
-
-
+    
 
     /** for debuging */
     method void toString() {
@@ -61,10 +302,11 @@ class Grid {
         var int i, j;
         let i = 0;
         while (i < 10) {
-            let array = grid[i];
+            
             let j = 0;
             while (j < 10) {
-                do Output.printInt(array[j]);
+                let array = grid[j];
+                do Output.printInt(array[i]);
                 let j = j + 1;
             }
             do Output.println();

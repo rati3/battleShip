@@ -218,7 +218,7 @@ call Screen.drawRectangle 4
 pop temp 0
 push constant 0
 return
-function Board.putShips 2
+function Board.putShips 3
 push argument 0
 pop pointer 0
 push constant 0
@@ -256,7 +256,13 @@ if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0
 push this 7
-call Grid.toString 1
+call Grid.findShips 1
+pop temp 0
+push this 7
+call Grid.shipsAreValid 1
+pop local 2
+push local 2
+call Output.printInt 1
 pop temp 0
 push constant 0
 pop local 1

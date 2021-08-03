@@ -75,7 +75,7 @@ class Board {
 
     method void putShips() {
         var char keyPressed;
-        var boolean loop;
+        var boolean loop, validTest;
     
         let loop = true; 
         while (loop) {
@@ -90,7 +90,9 @@ class Board {
             }
     
             if (keyPressed = 83) { // s
-                do grid.toString();
+                do grid.findShips();
+                let validTest = grid.shipsAreValid();
+                do Output.printInt(validTest);
                 let loop = false;
             }
             if (keyPressed = 128) { // ENTER

@@ -11,5 +11,29 @@ class Ship {
         return this;
     }
 
+    method void toString() {
+        do Output.printString("x: ");
+        do Output.printInt(x);
+        do Output.println();
+
+        do Output.printString("y: ");
+        do Output.printInt(y);
+        do Output.println();
+
+        do Output.printString("size: ");
+        do Output.printInt(size);
+        do Output.println();
+
+        if (isVertical) {
+            do Output.printString("Vertically");
+        } else {
+            do Output.printString("Horizontally");
+        }
+        do Output.println();
+        do Output.println();
+
+        return;
+    }
+
 
 }
