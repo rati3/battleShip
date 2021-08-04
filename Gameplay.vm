@@ -29,7 +29,7 @@ call Board.dispose 1
 pop temp 0
 push constant 0
 return
-function Gameplay.start 0
+function Gameplay.start 3
 push argument 0
 pop pointer 0
 push this 0
@@ -45,6 +45,18 @@ call Board.drawBoard 1
 pop temp 0
 push this 0
 call Board.putShips 1
+pop temp 0
+push this 0
+call Board.generateShips 1
+pop local 0
+push local 0
+push local 0
+call Array.setShips 2
+pop temp 0
+push this 1
+push constant 0
+not
+call Board.changeBox 2
 pop temp 0
 push constant 0
 return

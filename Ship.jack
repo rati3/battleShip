@@ -11,6 +11,14 @@ class Ship {
         return this;
     }
 
+    method int getX() {
+        return x;
+    }
+
+    method int getY() {
+        return y;
+    }
+
     method void toString() {
         do Output.printString("x: ");
         do Output.printInt(x);

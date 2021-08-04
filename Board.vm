@@ -207,49 +207,57 @@ push argument 1
 call Screen.setColor 1
 pop temp 0
 push this 4
+push constant 1
+add
 push this 5
+push constant 1
+add
 push this 4
 push this 6
 add
+push constant 1
+sub
 push this 5
 push this 6
 add
+push constant 1
+sub
 call Screen.drawRectangle 4
 pop temp 0
 push constant 0
 return
-function Board.putShips 3
+function Board.putShips 5
 push argument 0
 pop pointer 0
 push constant 0
 not
-pop local 1
+pop local 3
 label WHILE_EXP0
-push local 1
+push local 3
 not
 if-goto WHILE_END0
 label WHILE_EXP1
-push local 0
+push local 2
 push constant 0
 eq
 not
 not
 if-goto WHILE_END1
 call Keyboard.keyPressed 0
-pop local 0
+pop local 2
 goto WHILE_EXP1
 label WHILE_END1
 label WHILE_EXP2
-push local 0
+push local 2
 push constant 0
 eq
 not
 if-goto WHILE_END2
 call Keyboard.keyPressed 0
-pop local 0
+pop local 2
 goto WHILE_EXP2
 label WHILE_END2
-push local 0
+push local 2
 push constant 83
 eq
 if-goto IF_TRUE0
@@ -260,50 +268,73 @@ call Grid.findShips 1
 pop temp 0
 push this 7
 call Grid.shipsAreValid 1
-pop local 2
-push local 2
-call Output.printInt 1
-pop temp 0
-push constant 0
-pop local 1
-label IF_FALSE0
-push local 0
-push constant 128
-eq
 if-goto IF_TRUE1
 goto IF_FALSE1
 label IF_TRUE1
 push pointer 0
 push constant 0
-not
+call Board.changeBox 2
+pop temp 0
+push constant 0
+pop local 3
+goto IF_END1
+label IF_FALSE1
+push pointer 0
+call Board.resetGrid 1
+pop temp 0
+label IF_END1
+label IF_FALSE0
+push local 2
+push constant 128
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push this 4
+push this 0
+sub
+push this 6
+call Math.divide 2
+pop local 0
+push this 5
+push this 1
+sub
+push this 6
+call Math.divide 2
+pop local 1
+push this 7
+push local 0
+push local 1
+call Grid.isEmpty 3
+pop local 4
+push pointer 0
+push local 4
 call Board.selectBox 2
 pop temp 0
 push this 7
-push this 4
-push this 5
-push this 0
-push this 1
-push this 6
-call Grid.add 6
-pop temp 0
-label IF_FALSE1
 push local 0
+push local 1
+push local 4
+call Grid.add 4
+pop temp 0
+label IF_FALSE2
+push local 2
 push constant 130
 lt
 not
-push local 0
+push local 2
 push constant 133
 gt
 not
 and
-if-goto IF_TRUE2
-goto IF_FALSE2
-label IF_TRUE2
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
 push pointer 0
-push local 0
+push local 2
 call Board.arrowPressed 2
 pop temp 0
-label IF_FALSE2
+label IF_FALSE3
 goto WHILE_EXP0
 label WHILE_END0
 push constant 0
@@ -397,4 +428,94 @@ not
 call Board.changeBox 2
 pop temp 0
 push constant 0
+return
+function Board.resetSelectedBoxes 3
+push argument 0
+pop pointer 0
+push constant 0
+pop local 1
+label WHILE_EXP0
+push local 1
+push constant 10
+lt
+not
+if-goto WHILE_END0
+push constant 0
+pop local 2
+label WHILE_EXP1
+push local 2
+push constant 10
+lt
+not
+if-goto WHILE_END1
+push this 7
+push local 1
+push local 2
+call Grid.isEmpty 3
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 0
+push local 1
+push constant 15
+call Math.multiply 2
+add
+pop this 4
+push this 1
+push local 2
+push constant 15
+call Math.multiply 2
+add
+pop this 5
+push pointer 0
+push constant 0
+call Board.selectBox 2
+pop temp 0
+label IF_FALSE0
+push local 2
+push constant 1
+add
+pop local 2
+goto WHILE_EXP1
+label WHILE_END1
+push local 1
+push constant 1
+add
+pop local 1
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Board.resetGrid 0
+push argument 0
+pop pointer 0
+push pointer 0
+push constant 0
+call Board.changeBox 2
+pop temp 0
+push pointer 0
+call Board.resetSelectedBoxes 1
+pop temp 0
+push this 0
+pop this 4
+push this 1
+pop this 5
+push pointer 0
+push constant 0
+not
+call Board.changeBox 2
+pop temp 0
+push this 7
+call Grid.dispose 1
+pop temp 0
+call Grid.new 0
+pop this 7
+push constant 0
+return
+function Board.generateShips 0
+push argument 0
+pop pointer 0
+push this 7
+call Grid.getRandomPositions 1
 return

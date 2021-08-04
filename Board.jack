@@ -68,14 +68,15 @@ class Board {
     /** method selects or unselects box of (x,y) */
     method void selectBox(boolean shouldFill) {
         do Screen.setColor(shouldFill);
-        do Screen.drawRectangle(x, y, x + boxLen, y + boxLen);
+        do Screen.drawRectangle(x + 1, y + 1, x + boxLen - 1, y + boxLen - 1);
         
         return;
     }
 
     method void putShips() {
+        var int i, j;
         var char keyPressed;
-        var boolean loop, validTest;
+        var boolean loop, empty;
     
         let loop = true; 
         while (loop) {
@@ -91,13 +92,20 @@ class Board {
     
             if (keyPressed = 83) { // s
                 do grid.findShips();
-                let validTest = grid.shipsAreValid();
-                do Output.printInt(validTest);
-                let loop = false;
+                if (grid.shipsAreValid()) {
+                    do changeBox(false);
+                    let loop = false;
+                } else {
+                    do resetGrid();
+                }
+               
             }
             if (keyPressed = 128) { // ENTER
-                do selectBox(true);
-                do grid.add(x, y, x1, y1, boxLen);
+                let i = (x - x1) / boxLen;
+                let j = (y - y1) / boxLen;
+                let empty = grid.isEmpty(i, j);
+                do selectBox(empty);
+                do grid.add(i, j, empty);
             }
            if (~(keyPressed < 130) & ~(keyPressed > 133)) {
                do arrowPressed(keyPressed);
@@ -126,5 +134,41 @@ class Board {
         return;
     }
     
+    method void resetSelectedBoxes() {
+        var Array array;
+        var int i, j;
+        let i = 0;
+        while (i < 10) {
+            let j = 0;
+            while (j < 10) {
+                if (~(grid.isEmpty(i, j))) {
+                    let x = x1 + (i * 15);
+                    let y = y1 + (j * 15);
+                    do selectBox(false);
+                }
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void resetGrid() {
+        do changeBox(false);
+        do resetSelectedBoxes();
+        let x = x1;
+        let y = y1;
+        do changeBox(true);
+
+        do grid.dispose();
+        let grid = Grid.new();
+
+        return;
+    }
+
+
+    method Array generateShips() {
+        return grid.getRandomPositions();
+    }
 
 }

@@ -224,7 +224,7 @@ class Grid {
         return;
     }
 
-    method void findShips() { // for validate sum 1 s
+    method void findShips() {
         var Ship curr;
         var Array array;
         var int i, j;
@@ -241,15 +241,7 @@ class Grid {
             }
             let i = i + 1;
         }
-        
-
-        // let i = 0;
-        // while (i < shipsFound) {
-        //     let curr = ships[i];
-        //     do curr.toString();
-        //     let i = i + 1;
-        // }
-
+    
         return;
     }
 
@@ -280,15 +272,16 @@ class Grid {
         return allShipIsPut & noMoreIsPut;
     }
 
-    method void add(int x, int y, int startX, int startY, int boxLen) {
+    method void add(int i, int j, boolean shouldFill) {
         var Array array;
-        var int i, j;
-        
-        let i = (x - startX) / boxLen;
-        let j = (y - startY) / boxLen;
-        
+        var int val;
+        if (shouldFill) {
+            let val = 1;
+        } else {
+            let val = 0;
+        }
         let array = grid[i];
-        let array[j] = 1;
+        let array[j] = val;
         
         return;
     }
@@ -315,5 +308,181 @@ class Grid {
         do Output.println();
         return;
     }
+
+
+    /** method returns positions of computer's ships depending on arrangement of player's ships */
+    method Array getRandomPositions() {
+        var Array generatedShips;
+        var Ship currShip;
+        var int a, b, c, d, x, y, xMod, yMod;
+        var boolean isVertical;
+
+        let generatedShips = Array.new(7);
+
+        // first 1x1 ship
+        let currShip = ships[2];
+        let a = currShip.getX();
+        let currShip = ships[4];
+        let b = currShip.getY();
+        let currShip = ships[3];
+        let c = currShip.getX();
+        let currShip = ships[0];
+        let d = currShip.getX();
+        let isVertical = (Modulo.mod(a + d, 2) = 0);
+        let x = Modulo.mod(a + b, 10);
+        let y = Modulo.mod(c + d, 10);
+
+        let currShip = Ship.new(x, y, 1, isVertical);
+        let generatedShips[0] = currShip;
+
+
+        // second 1x1 ship
+        let currShip = ships[5];
+        let a = currShip.getY();
+        let currShip = ships[3];
+        let b = currShip.getY();
+        let currShip = ships[4];
+        let c = currShip.getX();
+        let currShip = ships[1];
+        let d = currShip.getX();
+        let isVertical = (Modulo.mod(a + d, 2) = 0);
+        let x = Modulo.mod(a + b, 10);
+        let y = Modulo.mod(c + d, 10);
+
+        let currShip = Ship.new(x, y, 1, isVertical);
+        let generatedShips[1] = currShip;
+
+
+        // first 2x1 ship
+        let currShip = ships[1];
+        let a = currShip.getX();
+        let currShip = ships[0];
+        let b = currShip.getY();
+        let currShip = ships[5];
+        let c = currShip.getY();
+        let currShip = ships[2];
+        let d = currShip.getX();
+        let isVertical = (Modulo.mod(a + d, 2) = 0);
+        if (isVertical) {
+            let xMod = 10;
+            let yMod = 9;
+        } else {
+            let xMod = 9;
+            let yMod = 10;
+        }
+        let x = Modulo.mod(a + b, xMod);
+        let y = Modulo.mod(c + d, yMod);
+
+        let currShip = Ship.new(x, y, 2, isVertical);
+        let generatedShips[2] = currShip;
+
+
+        // second 2x1 ship
+        let currShip = ships[0];
+        let a = currShip.getY();
+        let currShip = ships[4];
+        let b = currShip.getY();
+        let currShip = ships[2];
+        let c = currShip.getX();
+        let currShip = ships[3];
+        let d = currShip.getY();
+        let isVertical = (Modulo.mod(a + d, 2) = 0);
+        if (isVertical) {
+            let xMod = 10;
+            let yMod = 9;
+        } else {
+            let xMod = 9;
+            let yMod = 10;
+        }
+        let x = Modulo.mod(a + b, xMod);
+        let y = Modulo.mod(c + d, yMod);
+
+        let currShip = Ship.new(x, y, 2, isVertical);
+        let generatedShips[3] = currShip;
+
+
+        // 3x1 ship
+        let currShip = ships[6];
+        let a = currShip.getY();
+        let currShip = ships[2];
+        let b = currShip.getY();
+        let currShip = ships[5];
+        let c = currShip.getY();
+        let currShip = ships[1];
+        let d = currShip.getX();
+        let isVertical = (Modulo.mod(a + d, 2) = 0);
+        if (isVertical) {
+            let xMod = 10;
+            let yMod = 8;
+        } else {
+            let xMod = 8;
+            let yMod = 10;
+        }
+        let x = Modulo.mod(a + b, xMod);
+        let y = Modulo.mod(c + d, yMod);
+
+        let currShip = Ship.new(x, y, 3, isVertical);
+        let generatedShips[4] = currShip;
+
+
+        // 4x1 ship
+        let currShip = ships[3];
+        let a = currShip.getX();
+        let currShip = ships[2];
+        let b = currShip.getY();
+        let currShip = ships[1];
+        let c = currShip.getX();
+        let currShip = ships[0];
+        let d = currShip.getY();
+        let isVertical = (Modulo.mod(a + d, 2) = 0);
+        if (isVertical) {
+            let xMod = 10;
+            let yMod = 7;
+        } else {
+            let xMod = 7;
+            let yMod = 10;
+        }
+        let x = Modulo.mod(a + b, xMod);
+        let y = Modulo.mod(c + d, yMod);
+
+        let currShip = Ship.new(x, y, 4, isVertical);
+        let generatedShips[5] = currShip;
+
+
+        // 5x1 ship
+        let currShip = ships[6];
+        let a = currShip.getY();
+        let currShip = ships[5];
+        let b = currShip.getX();
+         let currShip = ships[0];
+        let c = currShip.getY();
+        let currShip = ships[1];
+        let d = currShip.getY();
+        let isVertical = (Modulo.mod(a + d, 2) = 0);
+        if (isVertical) {
+            let xMod = 10;
+            let yMod = 6;
+        } else {
+            let xMod = 6;
+            let yMod = 10;
+        }
+        let x = Modulo.mod(a + b, xMod);
+        let y = Modulo.mod(c + d, yMod);
+
+        let currShip = Ship.new(x, y, 5, isVertical);
+        let generatedShips[6] = currShip;
+
+        return generatedShips;
+    }
+
+    method void setShips(Array shipsArg) {
+        let ships = shipsArg;
+
+        return;
+    }
+
+    // todo fill 2d grid by ships
+
+
 
 }
