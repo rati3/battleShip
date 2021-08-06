@@ -1,10 +1,40 @@
 class Main {
     function void main() {
         var Gameplay gameplay;
-        let gameplay = Gameplay.new();
-        do gameplay.start();
+        var char keyPressed;
+        var boolean playerWin;
+
+
+        while (true) {
+            
+            let gameplay = Gameplay.new();
+            let playerWin = gameplay.start();   // main function of game
+            do gameplay.dispose();
+
+            if (playerWin) {
+                do Output.printString("You Win!");
+            } else {
+                do Output.printString("You Lose!");
+            }
+            do Output.println();
+            
+            do Output.printString("Press space to start new game");
+            do Output.println();
+
+             // wait for key realease
+            while (~(keyPressed = 0)) {
+                 let keyPressed = Keyboard.keyPressed();
+            }
+            // wait for space
+            while (~(keyPressed = 32)) {
+                let keyPressed = Keyboard.keyPressed();
+            }
+
+            do Screen.clearScreen();
+            
+        }
+
         
-        do gameplay.dispose();
 
         return;
     }

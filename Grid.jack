@@ -1,5 +1,6 @@
 class Grid {
     field Array grid;          // 2D grid - at 1 there is part of ship, 0 is empty
+    field Array opponent;
     field Array ships;        // array of Ship 
     field Array sizes;       // array of all unique length
     field Array validShips; // at the begining elements of validShips is length of each ship, -1 after add the ship
@@ -7,6 +8,7 @@ class Grid {
 
     constructor Grid new() { 
         do initialize2DArray();
+        do initialzieOpponent();
         do initializeSizes();
         do initializevalidShips();
        
@@ -28,6 +30,7 @@ class Grid {
         }
 
         do grid.dispose();
+        do opponent.dispose();
         do ships.dispose();
         do sizes.dispose();
         do validShips.dispose();
@@ -81,6 +84,25 @@ class Grid {
         return;
     }
 
+    method void initialzieOpponent() {
+        var Array array;
+        var int i, j;
+        let opponent = Array.new(10);
+        let i = 0;
+        while (i < 10) {
+            let array = Array.new(10);
+            let j = 0;
+            while (j < 10) {
+                let array[j] = 0;
+                let j = j + 1;
+            }
+            let opponent[i] = array;
+            let i = i + 1;
+        }
+        return;
+
+    }
+
     method boolean inBounds(int i, int j) {
         var boolean validI, validJ;
         let validI = (~(i < 0)) & (i < 10);
@@ -117,6 +139,8 @@ class Grid {
                 if (array[curr] = 0) {
                     return;
                 }
+           } else {
+               return;
            }
            let loop = loop + 1;
         }
@@ -124,9 +148,8 @@ class Grid {
         // check if there is any upper neighbor
         if ((~(validNeighbor(i, j - 1))) | (~(validNeighbor(i - 1, j - 1))) | (~(validNeighbor(i + 1, j - 1)))) {
             return;
-        }
+        }        
 
-        
         let loop = 0;
         while (loop < size) {                                                                       // check left and
             if ((~(validNeighbor(i - 1, j + loop))) | (~(validNeighbor(i + 1, j + loop)))) {       // right neighbors
@@ -170,6 +193,8 @@ class Grid {
                 if (array[j] = 0) {          // length of 'size' 
                     return;                 // ones horizontally
                 }
+            } else {
+                return;
             }
             let loop = loop + 1;
         }
@@ -204,6 +229,14 @@ class Grid {
             }
             let loop = loop + 1;
         }
+
+        return;
+    }
+
+    method void resetShips() {
+        do initializevalidShips();
+        do initialize2DArray();
+        let shipsFound = 0;
 
         return;
     }
@@ -298,7 +331,7 @@ class Grid {
             
             let j = 0;
             while (j < 10) {
-                let array = grid[j];
+                let array = opponent[j];
                 do Output.printInt(array[i]);
                 let j = j + 1;
             }
@@ -310,11 +343,11 @@ class Grid {
     }
 
 
-    /** method returns positions of computer's ships depending on arrangement of player's ships */
-    method Array getRandomPositions() {
+    /** method returns computer's ships depending on arrangement of player's ships */
+    method Array getRandomShips(int n) {
         var Array generatedShips;
         var Ship currShip;
-        var int a, b, c, d, x, y, xMod, yMod;
+        var int a, b, c, d, x, y, xMod, yMod, num1, num2;
         var boolean isVertical;
 
         let generatedShips = Array.new(7);
@@ -329,8 +362,16 @@ class Grid {
         let currShip = ships[0];
         let d = currShip.getX();
         let isVertical = (Modulo.mod(a + d, 2) = 0);
-        let x = Modulo.mod(a + b, 10);
-        let y = Modulo.mod(c + d, 10);
+        let num1 = (a + b + c) * n;
+        let num2 = (c + d + a) * n;
+        if (num1 < 0) {
+            let num1 = 0 - num1;
+        }
+        if (num2 < 0) {
+            let num2 = 0 - num2;
+        }
+        let x = Modulo.mod(num1, 10);
+        let y = Modulo.mod(num2, 10);
 
         let currShip = Ship.new(x, y, 1, isVertical);
         let generatedShips[0] = currShip;
@@ -346,8 +387,16 @@ class Grid {
         let currShip = ships[1];
         let d = currShip.getX();
         let isVertical = (Modulo.mod(a + d, 2) = 0);
-        let x = Modulo.mod(a + b, 10);
-        let y = Modulo.mod(c + d, 10);
+        let num1 = (c + b) * n;
+        let num2 = (c + d + b) * n;
+        if (num1 < 0) {
+            let num1 = 0 - num1;
+        }
+        if (num2 < 0) {
+            let num2 = 0 - num2;
+        }
+        let x = Modulo.mod(num1, 10);
+        let y = Modulo.mod(num2, 10);
 
         let currShip = Ship.new(x, y, 1, isVertical);
         let generatedShips[1] = currShip;
@@ -370,8 +419,16 @@ class Grid {
             let xMod = 9;
             let yMod = 10;
         }
-        let x = Modulo.mod(a + b, xMod);
-        let y = Modulo.mod(c + d, yMod);
+        let num1 = (3 * a + b) * n;
+        let num2 = (5 * b + 7 * c + d) * n;
+        if (num1 < 0) {
+            let num1 = 0 - num1;
+        }
+        if (num2 < 0) {
+            let num2 = 0 - num2;
+        }
+        let x = Modulo.mod(num1, xMod);
+        let y = Modulo.mod(num2, yMod);
 
         let currShip = Ship.new(x, y, 2, isVertical);
         let generatedShips[2] = currShip;
@@ -394,8 +451,16 @@ class Grid {
             let xMod = 9;
             let yMod = 10;
         }
-        let x = Modulo.mod(a + b, xMod);
-        let y = Modulo.mod(c + d, yMod);
+        let num1 = (17 * d  + a) * n;
+        let num2 = (19 * c + b) * n;
+        if (num1 < 0) {
+            let num1 = 0 - num1;
+        }
+        if (num2 < 0) {
+            let num2 = 0 - num2;
+        }
+        let x = Modulo.mod(num1, xMod);
+        let y = Modulo.mod(num2, yMod);
 
         let currShip = Ship.new(x, y, 2, isVertical);
         let generatedShips[3] = currShip;
@@ -418,8 +483,16 @@ class Grid {
             let xMod = 8;
             let yMod = 10;
         }
-        let x = Modulo.mod(a + b, xMod);
-        let y = Modulo.mod(c + d, yMod);
+        let num1 = (23 * b + c + 19 * d) * n;
+        let num2 = (17 * c + 23 * d + a) * n;
+        if (num1 < 0) {
+            let num1 = 0 - num1;
+        }
+        if (num2 < 0) {
+            let num2 = 0 - num2;
+        }
+        let x = Modulo.mod(num1, xMod);
+        let y = Modulo.mod(num2, yMod);
 
         let currShip = Ship.new(x, y, 3, isVertical);
         let generatedShips[4] = currShip;
@@ -442,8 +515,16 @@ class Grid {
             let xMod = 7;
             let yMod = 10;
         }
-        let x = Modulo.mod(a + b, xMod);
-        let y = Modulo.mod(c + d, yMod);
+        let num1 = (13 * a + 7 * b + 3 * c) * n;
+        let num2 = (11 * c + 19 * d) * n;
+        if (num1 < 0) {
+            let num1 = 0 - num1;
+        }
+        if (num2 < 0) {
+            let num2 = 0 - num2;
+        }
+        let x = Modulo.mod(num1, xMod);
+        let y = Modulo.mod(num2, yMod);
 
         let currShip = Ship.new(x, y, 4, isVertical);
         let generatedShips[5] = currShip;
@@ -466,8 +547,16 @@ class Grid {
             let xMod = 6;
             let yMod = 10;
         }
-        let x = Modulo.mod(a + b, xMod);
-        let y = Modulo.mod(c + d, yMod);
+        let num1 = (19 * a + b * 19) * n;
+        let num2 = (11 * (c + d) + a) * n;
+        if (num1 < 0) {
+            let num1 = 0 - num1;
+        }
+        if (num2 < 0) {
+            let num2 = 0 - num2;
+        }
+        let x = Modulo.mod(num1, xMod);
+        let y = Modulo.mod(num2, yMod);
 
         let currShip = Ship.new(x, y, 5, isVertical);
         let generatedShips[6] = currShip;
@@ -476,13 +565,129 @@ class Grid {
     }
 
     method void setShips(Array shipsArg) {
+        do ships.dispose();
         let ships = shipsArg;
 
         return;
     }
 
-    // todo fill 2d grid by ships
+    method void fillVertical(Ship currShip) {
+        var Array array;
+        var int i, j, size, index;
+        let i = currShip.getX();
+        let j = currShip.getY();
+        let size = currShip.getSize();
+        let array = grid[i];
+        while (size > 0) {
+            let index = j + size - 1;
+            let array[index] = 1;
+            let size = size - 1;
+        }
 
+        return;
+    }
+
+    method void fillHorizontal(Ship currShip) {
+        var Array array;
+        var int i, j, size, index;
+        let i = currShip.getX();
+        let j = currShip.getY();
+        let size = currShip.getSize();
+
+        while (size > 0) {
+            
+            let index = i + size - 1;
+            let array = grid[index];
+            let array[j] = 1;
+            let size = size - 1;
+        }
+
+        return;
+    }
+
+    // todo fill 2d grid by ships
+    method void fillGrid() {
+        var Ship currShip;
+        var int loop;
+        let loop = 0;
+        while (loop < 7) {
+            let currShip = ships[loop];
+            if (currShip.isVert()) {
+                do fillVertical(currShip);
+            } else {
+                do fillHorizontal(currShip);
+            }
+            let loop = loop + 1;
+        }
+        return;
+    }
+
+    method Array getGrid() {
+        return grid;
+    }
+
+    method void setGrid(Array gridArg) {
+        let grid = gridArg;
+        return;
+    }
+
+    method Ship findShipAt(int i, int j) {
+        var Ship ship;
+        var int loop, size, num;
+        let loop = 0;
+        while (loop < 7) {
+            let ship = ships[loop];
+            let size = ship.getSize();
+            if (ship.isVert()) {
+                if (i = ship.getX()) {
+                   let num = ship.getY() + size;
+                   if (num > j) {
+                       return ship;
+                   }
+                }
+            } else {
+                if (j = ship.getY()) {
+                    let num = ship.getX() + size;
+                    if (num > i) {
+                        return ship;
+                    }
+                }
+            }
+            let loop = loop + 1;
+        }
+        return ship;
+    }
+
+    method void strike(int i, int j) {
+        var Array array;
+        let array = opponent[i];
+        let array[j] = 1;
+
+        return;
+    }
+
+    method void miss(int i, int j) {
+        var Array array;
+        let array = opponent[i];
+        let array[j] = 2;
+
+        return;
+    }
+
+    method void destroy(int i, int j) {
+        var Array array;
+        let array = opponent[i];
+        let array[j] = 3;
+
+        return; 
+    }
+
+    method boolean alreadyShot(int i, int j) {
+        var Array array;
+        let array = opponent[i];
+
+        return (~(array[j] = 0));
+    }
 
 
 }

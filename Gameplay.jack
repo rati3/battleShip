@@ -14,33 +14,70 @@ class Gameplay{
         return;
     }
 
-    method void start() {
+    method boolean start() {
         var Array computerShips;
-        var int loop;
+        var int n;
         var Ship ship;
 
         do playerBoard.drawBoard();
         do playerBoard.changeBox(true); // bold starting (0,0) box 
 
         do computerBoard.drawBoard();
-
         do playerBoard.putShips();
 
-        let computerShips = playerBoard.generateShips();       // generate computer ships 
-        do computerShips.setShips(computerShips);            
 
-        // let loop = 3;
-        // while (loop < 7) {
-        //     let ship = computerShips[loop];
-        //     do ship.toString();
-        //     let loop = loop + 1;
+        /** TO RANDOM SHIPS OF COMPUTER UNCOMMENT THESE LINES */
+        /** RANDOMING IS NOT OPTIMAL. IT NEEDS ABOUT 10-15 SECONDS */
+        /** IN SOME CASES IT MAY OCCUR STACK OVERFLOW */
+
+        // let n = 1;
+        // let computerShips = playerBoard.generateShips(n);        
+
+        // while (~(computerBoard.setGeneratedShip(computerShips))) {
+        //     let n = n + 2;
+        //     let computerShips = playerBoard.generateShips(n);
+        //     do computerBoard.resetSelectedBoxes();
         // }
 
+        
+        /** FOR TESTING OTHER PARTS OF ASSIGNMENT COPY SHIPS OF PLAYER */
+        do computerBoard.setBoardGrid(playerBoard.getBoardGrid());
+       
+        return startGame(); 
+    }
 
-        do computerBoard.changeBox(true);
 
+    method boolean startGame() {
+        var ComputerShoot compShoot;
+        var int loop;
+        let compShoot = ComputerShoot.new(playerBoard);
 
-        return;
+       
+        while (true) {
+
+            // player is shooting
+            let loop = 1;
+            while (~(loop = 0)) {
+                do computerBoard.changeBox(true);
+                let loop = computerBoard.shoot();
+                if (computerBoard.noMoreShips()) {
+                    return true;
+                }
+            }
+
+            // computer is shooting
+            let loop = 1;
+            while (~(loop = 0)) {
+                let loop = compShoot.shoot();
+                if (compShoot.noMoreShips()) {
+                    return false;
+                }
+                do Sys.wait(300);
+            }
+            
+        }
+
+        return false;
     }
 
 }

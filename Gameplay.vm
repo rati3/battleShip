@@ -46,17 +46,79 @@ pop temp 0
 push this 0
 call Board.putShips 1
 pop temp 0
+push this 1
 push this 0
-call Board.generateShips 1
-pop local 0
-push local 0
-push local 0
-call Array.setShips 2
+call Board.getBoardGrid 1
+call Board.setBoardGrid 2
 pop temp 0
+push pointer 0
+call Gameplay.startGame 1
+return
+function Gameplay.startGame 2
+push argument 0
+pop pointer 0
+push this 0
+call ComputerShoot.new 1
+pop local 0
+label WHILE_EXP0
+push constant 0
+not
+not
+if-goto WHILE_END0
+push constant 1
+pop local 1
+label WHILE_EXP1
+push local 1
+push constant 0
+eq
+not
+not
+if-goto WHILE_END1
 push this 1
 push constant 0
 not
 call Board.changeBox 2
 pop temp 0
+push this 1
+call Board.shoot 1
+pop local 1
+push this 1
+call Board.noMoreShips 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+return
+label IF_FALSE0
+goto WHILE_EXP1
+label WHILE_END1
+push constant 1
+pop local 1
+label WHILE_EXP2
+push local 1
+push constant 0
+eq
+not
+not
+if-goto WHILE_END2
+push local 0
+call ComputerShoot.shoot 1
+pop local 1
+push local 0
+call ComputerShoot.noMoreShips 1
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 0
+return
+label IF_FALSE1
+push constant 300
+call Sys.wait 1
+pop temp 0
+goto WHILE_EXP2
+label WHILE_END2
+goto WHILE_EXP0
+label WHILE_END0
 push constant 0
 return

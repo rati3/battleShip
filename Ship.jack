@@ -1,5 +1,5 @@
 class Ship {
-    field int x, y, size;
+    field int x, y, size, lives;
     field boolean isVertical;
 
     constructor Ship new(int xArg, int yArg, int sizeArg, boolean isVert) {
@@ -7,8 +7,22 @@ class Ship {
         let y = yArg;
         let size = sizeArg;
         let isVertical = isVert;
+        let lives = sizeArg;
 
         return this;
+    }
+
+    method boolean strike() {
+        let lives = lives - 1;
+        return lives = 0;
+    }
+
+    method int getSize() {
+        return size;
+    }
+
+    method boolean isVert() {
+        return isVertical;
     }
 
     method int getX() {

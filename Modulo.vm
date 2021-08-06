@@ -4,8 +4,7 @@ push constant 0
 eq
 push argument 0
 push argument 1
-gt
-not
+lt
 or
 if-goto IF_TRUE0
 goto IF_FALSE0

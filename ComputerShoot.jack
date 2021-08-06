@@ -1,0 +1,158 @@
+class ComputerShoot {
+    field Board board;
+    field int x, y, tmpX, tmpY; // last positions
+    field boolean lastWasStrike, isVertical, alreadyTry;   // if do not know orientation, AI starts tring vertical
+    constructor ComputerShoot new(Board boardArg) {
+        let board = boardArg;
+
+        let x = 5;
+        let y = 5;
+
+        let lastWasStrike = false;
+        let isVertical = true;
+        let alreadyTry = false;
+
+        return this;
+    }
+
+    method int shootAt(int i, int j) {
+        var int strike;
+        let strike = board.shootAt(i, j);
+       
+        return strike;
+
+    }
+
+    method int shoot() {
+        var int strike;
+
+        if (~(lastWasStrike)) {
+            do nextPos();
+            let strike = shootAt(x, y);
+            if (strike = 1) {
+                let lastWasStrike = true;
+            }
+        } else {
+            if (isVertical) { 
+
+                if (alreadyTry) { // try down
+
+                    if (y = 9) {
+                        let isVertical = false;
+                        return shoot();
+                    } else {
+                        let y = y + 1;
+                        let strike = shootAt(x, y);
+                        if (strike = 0) {
+                            let isVertical = false;
+                            let alreadyTry = false;
+                            let x = tmpX;
+                            let y = tmpY;
+                        }
+                        if (strike = 2) {
+                            let alreadyTry = false;
+                            let lastWasStrike = false;
+                            let x = tmpX;
+                            let y = tmpY;
+                        }
+                        
+        
+                    }
+
+
+
+                } else { // try up
+                    
+                    if (y = 0) {
+                        let alreadyTry = true;
+                        return shoot();
+                    } else {
+                        let y = y - 1;
+                        let strike = shootAt(x, y);
+                        if (strike = 0) {
+                            let alreadyTry = true;
+                            let x = tmpX;
+                            let y = tmpY;
+                        }
+                        if (strike = 2) {
+                            let lastWasStrike = false;
+                            let alreadyTry = false;
+                            let x = tmpX;
+                            let y = tmpY;
+                        }
+                    
+                    }
+                }
+                
+            } else {
+
+                if (alreadyTry) { // finally right
+                    if (x = 9) {
+                        // print(what can I do?)
+                    } else {
+                        let x = x + 1;
+                        let strike = shootAt(x, y);
+                        if (strike = 0) {
+                            // print(I am frustrated)
+                        }
+                        if (strike = 2) {
+                            let lastWasStrike = false;
+                            let alreadyTry = false;
+                            let isVertical = true;
+                        }
+                    }
+
+
+
+                } else { // try left
+
+                    if (x = 0) {
+                        let alreadyTry = true;
+                        return shoot();
+                    } else {
+                        let x = x - 1;
+                        let strike = shootAt(x, y);
+                        if (strike = 0) {
+                            let alreadyTry = true;
+                            let x = tmpX;
+                            let y = tmpY;
+                        }
+                        if (strike = 2) {
+                            let lastWasStrike = false;
+                            let alreadyTry = false;
+                            let isVertical = true;
+                            let x = tmpX;
+                            let y = tmpY;
+                        }
+                        
+                    }
+
+                }
+
+            }
+    
+        }
+
+        return strike;
+    }
+
+    method void nextPos() {
+        let x = x + 1;
+        if (x = 10) {
+            let x = 0;
+            let y = y + 1;
+            if (y = 10) {
+                let y = 0;
+            }
+        }
+
+        let tmpX = x;
+        let tmpY = y;
+
+        return;
+    }
+
+    method boolean noMoreShips() {
+        return board.noMoreShips();
+    }
+}

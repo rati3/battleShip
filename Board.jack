@@ -4,6 +4,7 @@ class Board {
     field int x, y; // (x, y) of currently selected box
     field int boxLen;
     field Grid grid;
+    field int shipsAlive;
     constructor Board new(int x1Arg, int y1Arg, int x2Arg, int y2Arg, int boxLenArg) {
         let boxLen = boxLenArg;
         let x1 = x1Arg;
@@ -12,6 +13,8 @@ class Board {
         let y2 = y2Arg;
         let x = x1;
         let y = y1;
+
+        let shipsAlive = 7;
 
         let grid = Grid.new();
 
@@ -66,13 +69,15 @@ class Board {
     }
 
     /** method selects or unselects box of (x,y) */
-    method void selectBox(boolean shouldFill) {
+    method void selectBox(int x0, int y0, boolean shouldFill) {
         do Screen.setColor(shouldFill);
-        do Screen.drawRectangle(x + 1, y + 1, x + boxLen - 1, y + boxLen - 1);
+        do Screen.drawRectangle(x0 + 1, y0 + 1, x0 + boxLen - 1, y0 + boxLen - 1);
         
         return;
     }
 
+
+    /** let user places ships */
     method void putShips() {
         var int i, j;
         var char keyPressed;
@@ -104,7 +109,7 @@ class Board {
                 let i = (x - x1) / boxLen;
                 let j = (y - y1) / boxLen;
                 let empty = grid.isEmpty(i, j);
-                do selectBox(empty);
+                do selectBox(x, y, empty);
                 do grid.add(i, j, empty);
             }
            if (~(keyPressed < 130) & ~(keyPressed > 133)) {
@@ -112,6 +117,7 @@ class Board {
            }
 
         }
+    
         return;
     }
 
@@ -135,6 +141,25 @@ class Board {
     }
     
     method void resetSelectedBoxes() {
+        var int i, j;
+        let i = 0;
+        while (i < 10) {
+            let j = 0;
+            while (j < 10) {
+                if (~(grid.isEmpty(i, j))) {
+                    let x = x1 + (i * 15);
+                    let y = y1 + (j * 15);
+                    do selectBox(x, y, false);
+                }
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+
+    /** for debugging */
+    method void selectBoxes() {
         var Array array;
         var int i, j;
         let i = 0;
@@ -144,7 +169,7 @@ class Board {
                 if (~(grid.isEmpty(i, j))) {
                     let x = x1 + (i * 15);
                     let y = y1 + (j * 15);
-                    do selectBox(false);
+                    do selectBox(x, y, true);
                 }
                 let j = j + 1;
             }
@@ -167,8 +192,177 @@ class Board {
     }
 
 
-    method Array generateShips() {
-        return grid.getRandomPositions();
+    method Array generateShips(int n) {
+        return grid.getRandomShips(n);
     }
+
+    method Array getBoardGrid() {
+        return grid.getGrid();
+    }
+
+    method void setBoardGrid(Array gridArg) {
+        do grid.setGrid(gridArg);
+        do grid.findShips();
+        return;
+    }
+
+
+    method boolean setGeneratedShip(Array array) {
+        do grid.setShips(array);
+        
+        do grid.fillGrid();
+        do grid.findShips();
+        if (~(grid.shipsAreValid())) {
+            do grid.resetShips();
+            return false;
+
+        }
+        
+        return true;
+    }
+
+    method int shoot() {
+        var int i, j, strike;
+        var char keyPressed;
+        var boolean loop;
+        var Ship ship;
+    
+        let loop = true; 
+        while (loop) {
+            // wait for key realease
+            while (~(keyPressed = 0)) {
+                 let keyPressed = Keyboard.keyPressed();
+            }
+
+            // wait for new key press
+            while (keyPressed = 0) {
+                let keyPressed = Keyboard.keyPressed();
+            }
+
+            if (keyPressed = 128) { // ENTER
+                let i = (x - x1) / boxLen;
+                let j = (y - y1) / boxLen;
+                let strike = shootAt(i, j);
+
+                // wait for key realease
+                while (~(keyPressed = 0)) {
+                    let keyPressed = Keyboard.keyPressed();
+                }
+
+                return strike; 
+            }
+           if (~(keyPressed < 130) & ~(keyPressed > 133)) {
+               do arrowPressed(keyPressed);
+           }
+
+        }
+
+        return 0;
+    }
+
+    method void strike() {
+        var int x0, y0;
+        let x0 = x + 7;
+        let y0 = y + 3;
+
+        do selectBox(x, y, false);
+        do Screen.setColor(true);
+
+        do Screen.drawLine(x0, y0, x0, y0 + 5);
+        do Screen.drawLine(x0, y0 + 8, x0, y0 + 9);
+
+        return;
+
+    }
+
+    method boolean noMoreShips() {
+        return shipsAlive = 0;
+    }
+
+    method void destroyShip(Ship ship) {
+        var int size, i, j;
+        let size = ship.getSize();
+
+        if (ship.isVert()) {
+            let i = ship.getX();
+            while (size > 0) {
+                let j = ship.getY() + size - 1;
+                do destroy(i , j);
+                do grid.destroy(i, j);
+                let size = size - 1;
+            }
+        } else {
+            let j = ship.getY();
+            while (size > 0) {
+                let i = ship.getX() + size - 1;
+                do destroy(i, j);
+                do grid.destroy(i, j);
+                let size = size - 1;
+
+            }
+        }
+        return;
+    }
+
+    method void destroy(int i, int j) {
+        var int x0, y0;
+        let x0 = x1 + (i * 15);
+        let y0 = y1 + (j * 15);
+        do selectBox(x0, y0, false);
+
+        do Screen.setColor(true);
+        do Screen.drawLine(x0 + 1, y0 + 1, x0 + 14, y0 + 14);
+        do Screen.drawLine(x0 + 1, y0 + 14, x0 + 14, y0 + 1);
+
+        return;
+        
+    }
+
+    method void miss(int i, int j) {
+        var int x0, y0;
+        let x0 = x1 + (i * 15);
+        let y0 = y1 + (j * 15);
+        do selectBox(x0, y0, false);
+
+        do Screen.setColor(true);
+        do Screen.drawLine(x0 + 3, y0 + 5, x0 + 12, y0 + 5);
+        do Screen.drawLine(x0 + 3, y0 + 10, x0 + 12, y0 + 10);
+        do Screen.drawLine(x0 + 5, y0 + 3, x0 + 5, y0 + 12);
+        do Screen.drawLine(x0 + 10, y0 + 3, x0 + 10, y0 + 12);
+
+        return;
+    }
+
+    method int shootAt(int i , int j) {
+        var boolean strike; 
+        var Ship ship;
+
+        let x = x1 + (i * 15);
+        let y = y1 + (j * 15);
+
+
+        if (grid.alreadyShot(i, j)) {
+            return 4;
+        }
+
+        let strike = (~grid.isEmpty(i, j));
+        if (strike) {
+            let ship = grid.findShipAt(i, j);
+            do strike();        // draw strike
+            do grid.strike(i, j);  // save strike
+            if (ship.strike()) {
+                let shipsAlive = shipsAlive - 1;
+                do destroyShip(ship);
+                return 2;
+            }
+            return 1;
+        } else {
+            do miss(i , j);
+            do grid.miss(i, j);
+            return 0;
+        }
+
+    }
+
 
 }

@@ -1,7 +1,7 @@
 class Modulo {
     function int mod(int a, int b) {
         var int modulo, div;
-        if ((b = 0) | (~(a > b))) {
+        if ((b = 0) | (a < b)) {
             let modulo = a;
         } else {
             let div = b * Math.divide(a, b);
